@@ -1,7 +1,7 @@
 import { prisma } from "../lib/prisma";
 import { Request, Response, NextFunction } from "express";
 
-// Custom interface for type-safety
+
 interface AuthRequest extends Request {
   user?: {
     id: string;
@@ -9,21 +9,21 @@ interface AuthRequest extends Request {
   };
 }
 
-// Authorization Middleware
+
 export const authorize = (roles: string[]) => {
   return (req: Request, res: Response, next: NextFunction) => {
     const user = (req as any).user;
     if (!user || !roles.includes(user.role)) {
       return res.status(403).json({
         success: false,
-        message: "আপনার এই কাজটি করার অনুমতি নেই।",
+        message: "You do not have permission to do this.",
       });
     }
     next();
   };
 };
 
-// ১. সব মেডিসিন লিস্ট (Public)
+
 export const getAllMedicines = async (req: Request, res: Response) => {
   try {
     const { category, minPrice, maxPrice, manufacturer, search } = req.query;
@@ -53,14 +53,14 @@ export const getAllMedicines = async (req: Request, res: Response) => {
   } catch (error) {
     res
       .status(500)
-      .json({ success: false, message: "মেডিসিন লিস্ট পাওয়া যায়নি।" });
+      .json({ success: false, message: "Medicine list not found." });
   }
 };
 
-// ২. সিঙ্গেল মেডিসিন ডিটেইলস (Public)
+
 export const getMedicineById = async (req: Request, res: Response) => {
   try {
-    const id = req.params.id as string; // Casting to string
+    const id = req.params.id as string; 
     const medicine = await prisma.medicine.findUnique({
       where: { id },
       include: {
@@ -108,7 +108,7 @@ export const createMedicine = async (req: AuthRequest, res: Response) => {
   } catch (error) {
     res
       .status(400)
-      .json({ success: false, message: "মেডিসিন তৈরি করা সম্ভব হয়নি।" });
+      .json({ success: false, message: "It was not possible to make medicine." });
   }
 };
 
@@ -126,8 +126,6 @@ export const updateMedicine = async (req: AuthRequest, res: Response) => {
         .status(404)
         .json({ success: false, message: "Medicine not found" });
     }
-
-    // Admin hole allow, Seller hole ownership check
     if (req.user?.role !== "ADMIN" && existingMedicine.sellerId !== sellerId) {
       return res
         .status(403)
@@ -140,15 +138,15 @@ export const updateMedicine = async (req: AuthRequest, res: Response) => {
     const { name, price, stock, description, categoryId, image, manufacturer } =
       req.body;
 
-    // exactOptionalPropertyTypes error fix korar jonno amra empty object niye data structure banabo
+
     const updateData: any = {};
 
-    // Shudhu matro value thakle field add hobe, undefined thakle ignore hobe
+  
     if (name) updateData.name = name;
     if (description) updateData.description = description;
     if (manufacturer) updateData.manufacturer = manufacturer;
     if (image) updateData.image = image;
-    if (categoryId) updateData.categoryId = categoryId; // Direct categoryId update
+    if (categoryId) updateData.categoryId = categoryId; 
 
     if (price !== undefined && price !== null) {
       updateData.price = parseFloat(price.toString());
@@ -160,7 +158,7 @@ export const updateMedicine = async (req: AuthRequest, res: Response) => {
 
     const medicine = await prisma.medicine.update({
       where: { id },
-      data: updateData, // Dynamic data object
+      data: updateData, 
     });
 
     res.status(200).json({ success: true, data: medicine });
@@ -171,10 +169,10 @@ export const updateMedicine = async (req: AuthRequest, res: Response) => {
 };
 
 
-// ৫. মেডিসিন ডিলিট করা
+
 export const deleteMedicine = async (req: AuthRequest, res: Response) => {
   try {
-    const id = req.params.id as string; // Fix: Cast to string
+    const id = req.params.id as string; 
     const sellerId = req.user?.id;
 
     const existingMedicine = await prisma.medicine.findUnique({
