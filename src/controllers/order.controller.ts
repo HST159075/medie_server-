@@ -11,7 +11,7 @@ interface OrderItemInput {
   quantity: number;
 }
 
-// ১. Create order with Transaction & Stock Update
+
 export const createOrder = async (req: AuthRequest, res: Response) => {
   try {
     const { items, address } = req.body;
@@ -26,9 +26,9 @@ export const createOrder = async (req: AuthRequest, res: Response) => {
           where: { id: item.medicineId },
         });
 
-        if (!medicine) throw new Error(`ওষুধ (ID: ${item.medicineId}) পাওয়া যায়নি।`);
+        if (!medicine) throw new Error(`Medicine (ID: ${item.medicineId}) not found`);
         if (medicine.stock < item.quantity) {
-          throw new Error(`${medicine.name} পর্যাপ্ত স্টকে নেই।`);
+          throw new Error(`${medicine.name} Not enough in stock.`);
         }
 
         const itemTotal = medicine.price * item.quantity;
@@ -78,7 +78,7 @@ export const getOrders = async (req: AuthRequest, res: Response) => {
     });
     res.json({ success: true, data: orders });
   } catch (error) {
-    res.status(500).json({ message: "অর্ডার হিস্ট্রি পাওয়া যায়নি।" });
+    res.status(500).json({ message: "Order history not found." });
   }
 };
 
@@ -91,7 +91,7 @@ export const getOrderById = async (req: Request, res: Response) => {
     });
     res.json({ success: true, data: order });
   } catch (error) {
-    res.status(404).json({ message: "অর্ডারটি পাওয়া যায়নি।" });
+    res.status(404).json({ message: "The order was not received." });
   }
 };
 
@@ -105,7 +105,7 @@ export const getSellerOrders = async (req: AuthRequest, res: Response) => {
     });
     res.json({ success: true, data: orders });
   } catch (error) {
-    res.status(500).json({ message: "সেলার অর্ডার লিস্ট পাওয়া যায়নি।" });
+    res.status(500).json({ message: "Seller order list not found." });
   }
 };
 
@@ -127,6 +127,6 @@ export const updateOrderStatus = async (req: Request, res: Response) => {
 
     res.json({ success: true, data: order });
   } catch (error) {
-    res.status(400).json({ message: "স্ট্যাটাস আপডেট করা সম্ভব হয়নি।" });
+    res.status(400).json({ message: "Unable to update status." });
   }
 };
