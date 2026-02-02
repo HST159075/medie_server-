@@ -18,7 +18,6 @@ import { globalErrorHandler } from "./middleware/error.middleware.js";
 
 const app = express();
 
-// Middleware
 app.use(
   cors({
     origin: "http://localhost:3000", 
