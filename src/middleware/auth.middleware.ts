@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { auth } from "../lib/auth";
 import { fromNodeHeaders } from "better-auth/node";
-import { Session } from "inspector";
+
 
 export const isAuthenticated = async (
   req: Request,
@@ -20,7 +20,7 @@ export const isAuthenticated = async (
       console.log("Auth Failed: No session found")
       return res.status(401).json({
         success: false,
-        message: "Unauthorized: সেশন পাওয়া যায়নি। দয়া করে লগইন করুন।",
+        message: "Unauthorized: Session not found. Please login.।",
       });
     }
     const user = session.user as any;
@@ -29,7 +29,7 @@ export const isAuthenticated = async (
       return res.status(403).json({
         success: false,
         message:
-          "আপনার অ্যাকাউন্টটি স্থগিত করা হয়েছে।",
+          "Your account has been suspended.",
       });
     }
     (req as any).user = {
