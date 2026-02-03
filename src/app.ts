@@ -18,18 +18,36 @@ import { globalErrorHandler } from "./middleware/error.middleware.js";
 
 const app = express();
 
+
+const allowedOrigins = [
+  "https://medistore-dusky.vercel.app", 
+  "http://localhost:3000"                
+];
+
 app.use(
   cors({
-    origin: "http://localhost:3000", 
+    origin: function (origin, callback) {
+    
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("CORS Policy: This origin is not allowed."));
+      }
+    },
     credentials: true,
-    allowedHeaders: ["Content-Type", "Authorization", "Cookie"]
+    allowedHeaders: ["Content-Type", "Authorization", "Cookie"],
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"]
   }),
 );
+
+
+
+
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use("/api/auth", authRoutes);
-
 app.all("/api/auth/*all", toNodeHandler(auth));
 
 app.get("/", (req, res) => {
