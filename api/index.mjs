@@ -74,7 +74,7 @@ var prisma = new PrismaClient({ adapter });
 // src/lib/auth.ts
 import { bearer } from "better-auth/plugins";
 var auth = betterAuth({
-  baseURL: "http://localhost:5000",
+  baseURL: process.env.BETTER_AUTH_URL,
   database: prismaAdapter(prisma, {
     provider: "postgresql"
   }),
@@ -83,7 +83,7 @@ var auth = betterAuth({
   emailAndPassword: {
     enabled: true
   },
-  trustedOrigins: ["http://localhost:3000"],
+  trustedOrigins: [process.env.APP_URL],
   advanced: {
     cookiePrefix: "better-auth",
     useSecureCookies: false
@@ -788,11 +788,15 @@ var globalErrorHandler = (err, req, res, next) => {
 var app = express11();
 app.use(
   cors({
-    origin: "http://localhost:3000",
+    origin: [
+      "https://medistore-dusky.vercel.app"
+    ],
     credentials: true,
-    allowedHeaders: ["Content-Type", "Authorization", "Cookie"]
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"]
   })
 );
+app.options("*", cors());
 app.use(express11.json());
 app.use(express11.urlencoded({ extended: true }));
 app.use("/api/auth", auth_routes_default);
