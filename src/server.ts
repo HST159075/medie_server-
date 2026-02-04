@@ -19,10 +19,12 @@ async function main() {
   } catch (error) {
     console.error("An error occurred:", error);
     await prisma.$disconnect();
-    process.exit(1);
+    if (process.env.NODE_ENV !== "production") process.exit(1);
   }
 }
 
-main();
+if (process.env.NODE_ENV !== "production") {
+  main();
+}
 
 export default app;
