@@ -788,7 +788,7 @@ var globalErrorHandler = (err, req, res, next) => {
 var app = express11();
 app.use(
   cors({
-    origin: process.env.APP_URL || "http://localhost:3000",
+    origin: process.env.APP_URL,
     credentials: true
   })
 );
