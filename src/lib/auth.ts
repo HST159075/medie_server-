@@ -13,7 +13,7 @@ export const auth = betterAuth({
   emailAndPassword: {
     enabled: true,
   },
-  trustedOrigins: ["http://localhost:3000"],
+  trustedOrigins: ["https://medistore-dusky.vercel.app"],
   advanced: {
     cookiePrefix: "better-auth",
     useSecureCookies: false,
