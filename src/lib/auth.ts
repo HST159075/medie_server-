@@ -4,7 +4,7 @@ import { prisma } from "./prisma";
 import { bearer } from "better-auth/plugins";
 
 export const auth = betterAuth({
-  baseURL: "http://localhost:5000",
+  baseURL: process.env.BETTER_AUTH_URL || "https://medistore-server.vercel.app",
   database: prismaAdapter(prisma, {
     provider: "postgresql",
   }),
