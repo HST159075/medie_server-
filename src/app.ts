@@ -20,22 +20,20 @@ const app = express();
 
 app.use(
   cors({
-    origin: "https://medistore-dusky.vercel.app", 
+    origin: "https://medistore-dusky.vercel.app",
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization", "Cookie"]
+    allowedHeaders: ["Content-Type", "Authorization", "Cookie"],
   }),
 );
+app.options("*", cors());
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use("/api/auth", authRoutes);
 
 app.all("/api/auth/*all", toNodeHandler(auth));
-
-app.get("/", (req, res) => {
-  res.send("MediStore API is running..!!!");
-});
 
 app.use("/api/admin", adminRoutes);
 app.use("/api/medicines", medicineRoutes);
@@ -46,6 +44,10 @@ app.use("/api/categories", categoryRoutes);
 app.use("/api/reviews", reviewRoutes);
 app.use("/api/seller", sellerRoutes);
 app.use("/api/users", userRoutes);
+
+app.get("/", (req, res) => {
+  res.send("MediStore API is running..!!!");
+});
 
 app.use(globalErrorHandler);
 

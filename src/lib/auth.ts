@@ -13,10 +13,14 @@ export const auth = betterAuth({
   emailAndPassword: {
     enabled: true,
   },
-  trustedOrigins: ["https://medistore-dusky.vercel.app"],
+  // লোকাল এবং লাইভ উভয় ডোমেইন এখানে রাখুন
+  trustedOrigins: [
+    "http://localhost:3000",
+    "https://medistore-dusky.vercel.app",
+  ],
   advanced: {
     cookiePrefix: "better-auth",
-    useSecureCookies: false,
+    useSecureCookies: true,
   },
   user: {
     additionalFields: {
