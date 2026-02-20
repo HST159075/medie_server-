@@ -74,7 +74,7 @@ var prisma = new PrismaClient({ adapter });
 // src/lib/auth.ts
 import { bearer } from "better-auth/plugins";
 var auth = betterAuth({
-  baseURL: "http://localhost:5000",
+  baseURL: process.env.BETTER_AUTH_URL || "https://medistore-server.vercel.app",
   database: prismaAdapter(prisma, {
     provider: "postgresql"
   }),
@@ -83,10 +83,14 @@ var auth = betterAuth({
   emailAndPassword: {
     enabled: true
   },
-  trustedOrigins: ["http://localhost:3000"],
+  // লোকাল এবং লাইভ উভয় ডোমেইন এখানে রাখুন
+  trustedOrigins: [
+    "http://localhost:3000",
+    "https://medistore-dusky.vercel.app"
+  ],
   advanced: {
     cookiePrefix: "better-auth",
-    useSecureCookies: false
+    useSecureCookies: true
   },
   user: {
     additionalFields: {
@@ -786,20 +790,17 @@ var globalErrorHandler = (err, req, res, next) => {
 
 // src/app.ts
 var app = express11();
-app.use(
-  cors({
-    origin: "http://localhost:3000",
-    credentials: true,
-    allowedHeaders: ["Content-Type", "Authorization", "Cookie"]
-  })
-);
 app.use(express11.json());
 app.use(express11.urlencoded({ extended: true }));
+app.use(
+  cors({
+    origin: "https://medistore-dusky.vercel.app",
+    credentials: true
+  })
+);
+app.options("*", cors());
 app.use("/api/auth", auth_routes_default);
 app.all("/api/auth/*all", toNodeHandler2(auth));
-app.get("/", (req, res) => {
-  res.send("MediStore API is running..!!!");
-});
 app.use("/api/admin", admin_rotes_default);
 app.use("/api/medicines", medicine_routes_default);
 app.use("/api/seller/medicines", seller_medicine_route_default);
@@ -809,6 +810,9 @@ app.use("/api/categories", category_routes_default);
 app.use("/api/reviews", review_routes_default);
 app.use("/api/seller", seller_routes_default);
 app.use("/api/users", user_routes_default);
+app.get("/", (req, res) => {
+  res.send("MediStore API is running..!!!");
+});
 app.use(globalErrorHandler);
 var app_default = app;
 
