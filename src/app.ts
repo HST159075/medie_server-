@@ -18,6 +18,8 @@ import { globalErrorHandler } from "./middleware/error.middleware.js";
 
 const app = express();
 
+app.set("trust proxy", 1);
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -25,7 +27,9 @@ app.use(
   cors({
     origin: "https://medistore-dusky.vercel.app",
     credentials: true,
-    
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization", "Cookie"],
+    exposedHeaders: ["set-cookie"],
   }),
 );
 // app.options("(.*)", cors());

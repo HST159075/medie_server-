@@ -1007,12 +1007,16 @@ var init_app = __esm({
     init_user_routes();
     init_error_middleware();
     app = express11();
+    app.set("trust proxy", 1);
     app.use(express11.json());
     app.use(express11.urlencoded({ extended: true }));
     app.use(
       cors({
         origin: "https://medistore-dusky.vercel.app",
-        credentials: true
+        credentials: true,
+        methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+        allowedHeaders: ["Content-Type", "Authorization", "Cookie"],
+        exposedHeaders: ["set-cookie"]
       })
     );
     app.use("/api/auth", auth_routes_default);
