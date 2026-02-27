@@ -4,7 +4,7 @@ import { prisma } from "./prisma";
 import { bearer } from "better-auth/plugins";
 
 export const auth = betterAuth({
-  baseURL: process.env.BETTER_AUTH_URL || "https://medistore-server.vercel.app",
+  baseURL: process.env.BETTER_AUTH_URL || "https://meadi-server.onrender.com",
   database: prismaAdapter(prisma, {
     provider: "postgresql",
   }),
@@ -13,7 +13,6 @@ export const auth = betterAuth({
   emailAndPassword: {
     enabled: true,
   },
-  // লোকাল এবং লাইভ উভয় ডোমেইন এখানে রাখুন
   trustedOrigins: [
     "http://localhost:3000",
     "https://medistore-dusky.vercel.app",
